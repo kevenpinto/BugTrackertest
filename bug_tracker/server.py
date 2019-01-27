@@ -3,7 +3,7 @@ import argparse
 import falcon
 import os
 
-from .resources import IssueResource, IssuesResource, UserResource, DashResource
+from .resources import IssueResource, IssuesResource, UserResource, DashResource, CustomExceptionHandler
 from .models import Repository
 
 
@@ -17,6 +17,7 @@ def _index_middleware(app):
 
 def make_api(database_location, migrate_database=True):
     api = falcon.API()
+    # api.add_error_handler(CustomExceptionHandler)
     repo = Repository(database_location)
     if migrate_database:
         repo.migrate_database()

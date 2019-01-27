@@ -1,8 +1,11 @@
 const m = require('mithril')
 
 function validate_input(fields){
+    //alert("Validator")
+    //m('div','In Validator')
+    let error_msg = ""
     if(!fields.email){
-        alert("Email Cannot Be Blank")
+        error_msg +=  "Email Cannot Be Blank"
         return (false)
     }
     else
@@ -10,15 +13,19 @@ function validate_input(fields){
         if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(fields.email))
         {
             if(!fields.passwd){
-                alert("Password Cannot Be Blank")
+                error_msg += "Password Cannot Be Blank"
                 return (false)
             }
             return (true)
         }
         else {
-            alert("You have entered an invalid email address!")
+            error_msg += "You have entered an invalid email address!"
             return (false)
             }
+    }
+    if (error_msg){
+        alert(error_msg)
+        m('div',error_msg)
     }
     return true
   }
@@ -67,22 +74,23 @@ class UserModel {
     //this.issues = {}
     this.email  = ''
     this.passwd = ''
-    this.closed = ''
   }
     async createUser(fields) {
         if (validate_input(fields))
         {
-
+            //alert("in if")
             await m.request({
               method: "POST",
               url: `/Register`,
               data: fields
             })
-            return await this.loadIssues()
+            m.route("/issues")
+            m.redraw()
          }
         else {
-                m.route.set(`/Register`)
-                m.redraw()
+                alert("in Else")
+                m.route.set("/Dashboard")
+                m.redraw.strategy("none")
              }
       }
 }

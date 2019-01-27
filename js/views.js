@@ -111,7 +111,8 @@ class IssueEditor {
   constructor(vnode) {
     this.title = vnode.attrs.title
     this.descriptionText = vnode.attrs.descriptionText
-    this.closed = false
+    this.closed = vnode.attrs.closed
+    //alert(vnode.attrs.closed)
     if (vnode.attrs.closed){
       this.closed = true
     } else {
@@ -120,6 +121,8 @@ class IssueEditor {
     this.onSubmit = vnode.attrs.onSubmit
   }
   view() {
+  console.log('load issue.....22222')
+
     return m('form', {onsubmit: e => this.onSubmit({title: this.title, descriptionText: this.descriptionText ,closed: this.closed})}, [
       m('.form-group', [
         m('label', {'for': 'title-input'}, 'Issue Title'),
@@ -131,7 +134,13 @@ class IssueEditor {
       ]),
       m('.form-group', [
         m('label', {'for': 'close-input'}, 'Close Issue'),
-        m('input.input#close-input[type=checkbox]', {onClick: (e) => {this.closed = e.target.value},checked :this.closed})
+        m('input.input#close-input[type=checkbox]', {onclick: (e) => {
+            this.closed = false;
+            console.log(e.target.checked);
+            if (e.target.checked){
+                this.closed = true;
+            }
+            },checked :this.closed})
       ]),
       m('button.btn.btn-primary#save-button', {type: 'submit'}, 'Save')
     ])
@@ -149,9 +158,9 @@ const ToolbarContainer = {
         m('a.navbar-brand', {href: '/issues', oncreate: m.route.link}, 'Bug Tracker'),
         m('.collapse.navbar-collapse', [
           m('ul.navbar-nav', [
-            m('li.nav-item', [
-              m('a.nav-link', {href: '/issues/create', oncreate: m.route.link}, 'Sign In')
-            ]),
+//            m('li.nav-item', [
+//              m('a.nav-link', {href: '/issues/create', oncreate: m.route.link}, 'Sign In')
+//            ]),
             m('li.nav-item', [
               m('a.nav-link', {href: '/Register', oncreate: m.route.link}, 'Register')
             ]),

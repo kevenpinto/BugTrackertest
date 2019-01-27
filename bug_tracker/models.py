@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from datetime import datetime
 import dateutil.parser
 import sqlite3
 from collections import namedtuple
@@ -45,9 +46,9 @@ Issue = namedtuple('Issue', ['id', 'title', 'description', 'opened', 'closed'])
 
 def make_issue(row):
     id_, title, description, opened, closed = row
-    if opened is not None:
+    if opened:
         opened = dateutil.parser.parse(opened)
-    if closed is not None:
+    if closed:
         closed = dateutil.parser.parse(closed)
     return Issue(id_, title, description, opened, closed)
 
@@ -89,7 +90,7 @@ class IssueRepository(object):
             cursor.close()
 
     def create_issue(self, title, description,closed):
-        closedDate = datetime.now().isoformat() if closed else None
+        closedDate = datetime.now() if closed else None
         cursor = self._conn.cursor()
         try:
             cursor.execute(
@@ -116,11 +117,14 @@ class IssueRepository(object):
                 cursor.execute(
                     """UPDATE issues SET description = ? WHERE id = ?;""",(kwargs['descriptionText'], issue_id)
                 )
-            # if 'closed' in kwargs:
-            #     cursor.execute(
-            #         """UPDATE issues SET closed_datetime = '{}' WHERE id = {}"""
-            #             .format(datetime.now().isoformat() if kwargs.get('closed', False) else None, issue_id)
-            #     )
+            if 'closed' in kwargs:
+                print 'updating closed date .......'
+                print kwargs.get('closed')
+                cursor.execute(
+                     """UPDATE issues SET closed_datetime = ? WHERE id = ?"""
+                         ,(datetime.now() if kwargs.get('closed') else None , issue_id)
+                )
+
         finally:
             cursor.close()
 
