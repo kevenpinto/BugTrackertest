@@ -91,10 +91,14 @@ class DashResource(object):
                         }
             resp.status = falcon.HTTP_200
 
-class CustomExceptionHandler(Exception):
-    def handle(ex, req, resp, params):
-        resp.status = falcon.HTTP_401
-        response = json.loads(json.dumps(ast.literal_eval(str(ex))))
-        print("In Exception Class")
-        resp.body = json.dumps(response)
+class ErrorHandler(object):
+    @staticmethod
+    def http(ex, req, resp, params):
+        resp.body ='{"message": "Bug Tracker !!! -- Server not aware of resource Requested"}'
+        raise
 
+    @staticmethod
+    def unexpected(ex, req, resp, params):
+        resp.body = '{"message": "Bug Tracker !!! -- Server Feels poorly at the mo"}'
+        logger.exception('Bugtracker -- Unexpected Application Error')
+        raise falcon.HTTPInternalServerError()
